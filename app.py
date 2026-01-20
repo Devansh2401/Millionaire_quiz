@@ -1,4 +1,7 @@
 import os
+import random  # This is the missing line!
+
+# ... rest of your imports
 import json
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -12,10 +15,14 @@ if os.path.exists("firebase_key.json"):
     cred = credentials.Certificate("firebase_key.json")
 else:
     # This runs when you are hosted on Render
+    # app.py snippet
     fb_config = os.environ.get('FIREBASE_CONFIG')
-    if fb_config:
-        cred = credentials.Certificate(json.loads(fb_config))
-    else:
+if fb_config:
+    # This takes the text variable and makes it work like a file
+    cred_dict = json.loads(fb_config)
+    cred = credentials.Certificate(cred_dict)
+    firebase_admin.initialize_app(cred)
+else:
         raise ValueError("No FIREBASE_CONFIG found in environment variables!")
 
 firebase_admin.initialize_app(cred)
@@ -49,4 +56,6 @@ def get_questions():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Render provides a $PORT environment variable
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
