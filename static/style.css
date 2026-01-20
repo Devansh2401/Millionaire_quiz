@@ -1,0 +1,153 @@
+:root {
+    --neon-gold: #ffcc00;
+    --neon-blue: #00d4ff;
+    --neon-red: #ff4b2b;
+    --neon-green: #2ecc71;
+    --dark-bg: #010103;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: white;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* --- NEW NEON GLOW ANIMATION --- */
+/* Updated: Soft, static neon glow */
+.neon-flicker {
+    color: var(--neon-gold);
+    text-transform: uppercase;
+    font-size: 4.5rem;
+    margin: 0;
+    letter-spacing: 4px;
+    font-weight: 900;
+    /* This creates a sharp "edge" glow instead of a foggy blur */
+    text-shadow: 
+        1px 1px 0px rgba(0,0,0,1),   /* Sharp black outline for clarity */
+        0 0 5px var(--neon-gold),    /* Tight inner glow */
+        0 0 10px rgba(255, 204, 0, 0.4); /* Subtle outer aura */
+    filter: brightness(1.1);
+}
+.pulse-btn:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 15px var(--neon-gold);
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        text-shadow:
+            0 0 4px #fff,
+            0 0 11px #fff,
+            0 0 19px #fff,
+            0 0 40px var(--neon-gold),
+            0 0 80px var(--neon-gold),
+            0 0 90px var(--neon-gold),
+            0 0 100px var(--neon-gold),
+            0 0 150px var(--neon-gold);
+    }
+    20%, 22%, 24%, 55% {        
+        text-shadow: none;
+    }
+}
+
+/* Start Screen BG */
+#start-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(-45deg, #000, #0a0a2a, #000, #1a1a4a);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    z-index: 5000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Logos & Icons */
+.game-logo { width: 220px; margin-bottom: 15px; }
+.mini-logo-v2 { width: 140px; margin-bottom: 0px; opacity: 0.9; }
+.soft-glow { filter: drop-shadow(0 0 5px rgba(255, 204, 0, 0.3)); }
+
+/* Sub-text */
+.tagline { color: #888; font-size: 0.9rem; letter-spacing: 2px; margin-top: 10px; margin-bottom: 30px; }
+
+/* Pulse Button */
+.pulse-btn {
+    background: var(--neon-gold);
+    color: black;
+    border: none;
+    padding: 16px 50px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--neon-gold);
+    transition: 0.3s;
+}
+.pulse-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--neon-gold); }
+
+/* Game Viewport */
+#game-viewport { display: flex; height: 100vh; }
+.blur-effect { filter: blur(25px); }
+
+#side-panel {
+    width: 240px;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    border-right: 1px solid #111;
+}
+
+#main-stage { flex: 1; display: flex; justify-content: center; align-items: center; }
+#central-column { display: flex; flex-direction: column; align-items: center; width: 100%; }
+
+#timer-text { font-size: 3.5rem; font-weight: 800; color: var(--neon-gold); margin-bottom: 15px; }
+
+#question-card {
+    width: 80%;
+    max-width: 850px;
+    background: rgba(255,255,255,0.02);
+    padding: 35px;
+    border-radius: 40px;
+    border: 1.5px solid rgba(0, 212, 255, 0.2);
+    text-align: center;
+}
+
+#options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 25px; }
+
+.opt-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid var(--neon-blue);
+    color: white;
+    padding: 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+.prefix { color: var(--neon-gold); margin-right: 12px; }
+
+/* End Screen */
+#end-screen { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 6000; background: rgba(0,0,0,0.85); }
+.end-content { background: #050510; padding: 50px; border-radius: 40px; border: 2px solid var(--neon-gold); text-align: center; width: 400px; }
+
+.menu-btn { background: transparent; color: white; border: 1.5px solid white; padding: 12px 35px; border-radius: 50px; cursor: pointer; margin-top: 25px; }
+
+.ladder-step { padding: 8px 20px; color: #333; font-weight: bold; font-size: 0.9rem; }
+.ladder-step.active { color: var(--neon-gold); background: rgba(255, 204, 0, 0.1); border-radius: 50px; }
+.ladder-step.completed { color: var(--neon-blue); }
+
+.hidden { display: none !important; }

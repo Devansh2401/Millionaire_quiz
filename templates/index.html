@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON MILLIONAIRE</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div id="start-screen">
+        <div class="bg-animation"></div>
+        <div class="start-content">
+            <img src="/assets/logo.png" alt="Logo" class="game-logo soft-glow">
+            <h1 class="main-title neon-flicker">MILLIONAIRE</h1>
+            <p class="tagline">15 Questions • One Million • No Lifelines</p>
+            <button id="begin-btn" class="pulse-btn" onclick="initGame()">PLAY NOW</button>
+        </div>
+    </div>
+
+    <div id="game-viewport">
+        <div id="side-panel">
+            <div id="ladder"></div>
+        </div>
+
+        <main id="main-stage">
+            <div id="central-column">
+                <img src="/assets/logo.png" alt="Logo" class="mini-logo-v2">
+                <div id="timer-text" class="subtle-gold-glow">--</div>
+
+                <div id="question-card" class="subtle-blue-glow">
+                    <div id="prize-tag">CURRENT PRIZE: $0</div>
+                    <h2 id="q-text">Connecting to System...</h2>
+                    
+                    <div id="options-grid">
+                        <button class="opt-btn" onclick="selectAnswer(0)"><span class="prefix">A:</span><span id="opt0"></span></button>
+                        <button class="opt-btn" onclick="selectAnswer(1)"><span class="prefix">B:</span><span id="opt1"></span></button>
+                        <button class="opt-btn" onclick="selectAnswer(2)"><span class="prefix">C:</span><span id="opt2"></span></button>
+                        <button class="opt-btn" onclick="selectAnswer(3)"><span class="prefix">D:</span><span id="opt3"></span></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="end-screen" class="hidden">
+        <div class="end-content subtle-gold-glow">
+            <h1 id="result-title">GAME OVER</h1>
+            <div id="wrong-reveal-box" class="hidden">
+                <p>The correct answer was:</p>
+                <h2 id="correct-reveal" style="color:var(--neon-green)"></h2>
+            </div>
+            <div id="final-stats">
+                <p style="font-size: 0.8rem; letter-spacing: 2px; color: #888;">TOTAL WINNINGS</p>
+                <div id="final-prize" class="prize-glow">$0</div>
+            </div>
+            <button class="menu-btn" onclick="location.reload()">MAIN MENU</button>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
