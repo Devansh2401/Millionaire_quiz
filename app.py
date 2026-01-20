@@ -1,19 +1,25 @@
 import os
-import random
-from flask import Flask, render_template, jsonify, send_from_directory
+import json
 import firebase_admin
 from firebase_admin import credentials, firestore
+from flask import Flask, render_template, jsonify, send_from_directory
 
 app = Flask(__name__)
 
-# Firebase Setup
-try:
+# --- SECURE FIREBASE CONNECTION ---
+if os.path.exists("firebase_key.json"):
+    # This runs when you are on your MacBook
     cred = credentials.Certificate("firebase_key.json")
-    firebase_admin.initialize_app(cred)
-    db = firestore.client()
-except Exception as e:
-    print(f"CRITICAL: Firebase could not initialize: {e}")
+else:
+    # This runs when you are hosted on Render
+    fb_config = os.environ.get('FIREBASE_CONFIG')
+    if fb_config:
+        cred = credentials.Certificate(json.loads(fb_config))
+    else:
+        raise ValueError("No FIREBASE_CONFIG found in environment variables!")
 
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 @app.route('/assets/<path:filename>')
 def serve_assets(filename):
     return send_from_directory('assets', filename)
