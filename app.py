@@ -11,18 +11,17 @@ app = Flask(__name__)
 
 # --- SECURE FIREBASE CONNECTION ---
 if os.path.exists("firebase_key.json"):
-    # This runs when you are on your MacBook
+    # Local development (Mac)
     cred = credentials.Certificate("firebase_key.json")
 else:
-    # This runs when you are hosted on Render
-    # app.py snippet
-    fb_config = os.environ.get('FIREBASE_CONFIG')
-if fb_config:
-    # This takes the text variable and makes it work like a file
-    cred_dict = json.loads(fb_config)
-    cred = credentials.Certificate(cred_dict)
-    firebase_admin.initialize_app(cred)
-else:
+    # Production (Render)
+    # STEP 1: Define the variable first!
+    fb_config = os.environ.get('FIREBASE_CONFIG') 
+    
+    # STEP 2: Now you can check if it exists
+    if fb_config:
+        cred = credentials.Certificate(json.loads(fb_config))
+    else:
         raise ValueError("No FIREBASE_CONFIG found in environment variables!")
 
 firebase_admin.initialize_app(cred)
@@ -56,6 +55,6 @@ def get_questions():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    # Render provides a $PORT environment variable
+    # Use the port Render provides, or default to 5000 for local testing
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
