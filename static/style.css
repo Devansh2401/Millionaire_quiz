@@ -14,8 +14,7 @@ body {
     overflow: hidden;
 }
 
-/* --- NEW NEON GLOW ANIMATION --- */
-/* Updated: Soft, static neon glow */
+/* --- NEON GLOW ANIMATION --- */
 .neon-flicker {
     color: var(--neon-gold);
     text-transform: uppercase;
@@ -23,36 +22,20 @@ body {
     margin: 0;
     letter-spacing: 4px;
     font-weight: 900;
-    /* This creates a sharp "edge" glow instead of a foggy blur */
     text-shadow: 
-        1px 1px 0px rgba(0,0,0,1),   /* Sharp black outline for clarity */
-        0 0 5px var(--neon-gold),    /* Tight inner glow */
-        0 0 10px rgba(255, 204, 0, 0.4); /* Subtle outer aura */
+        1px 1px 0px rgba(0,0,0,1),
+        0 0 5px var(--neon-gold),
+        0 0 10px rgba(255, 204, 0, 0.4);
     filter: brightness(1.1);
 }
-.pulse-btn:hover {
-    filter: brightness(1.2);
-    box-shadow: 0 0 15px var(--neon-gold);
+
+/* Background Blur Class for Pop-ups */
+.blur-game {
+    filter: blur(15px);
+    transition: filter 0.3s ease;
 }
 
-@keyframes flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-        text-shadow:
-            0 0 4px #fff,
-            0 0 11px #fff,
-            0 0 19px #fff,
-            0 0 40px var(--neon-gold),
-            0 0 80px var(--neon-gold),
-            0 0 90px var(--neon-gold),
-            0 0 100px var(--neon-gold),
-            0 0 150px var(--neon-gold);
-    }
-    20%, 22%, 24%, 55% {        
-        text-shadow: none;
-    }
-}
-
-/* Start Screen BG */
+/* Start Screen */
 #start-screen {
     position: fixed;
     inset: 0;
@@ -74,7 +57,7 @@ body {
 
 /* Logos & Icons */
 .game-logo { width: 220px; margin-bottom: 15px; }
-.mini-logo-v2 { width: 140px; margin-bottom: 0px; opacity: 0.9; }
+.mini-logo-v2 { width: 140px; margin-bottom: 10px; opacity: 0.9; }
 .soft-glow { filter: drop-shadow(0 0 5px rgba(255, 204, 0, 0.3)); }
 
 /* Sub-text */
@@ -96,8 +79,7 @@ body {
 .pulse-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--neon-gold); }
 
 /* Game Viewport */
-#game-viewport { display: flex; height: 100vh; }
-.blur-effect { filter: blur(25px); }
+#game-viewport { display: flex; height: 100vh; transition: 0.3s; }
 
 #side-panel {
     width: 240px;
@@ -114,8 +96,56 @@ body {
 
 #timer-text { font-size: 3.5rem; font-weight: 800; color: var(--neon-gold); margin-bottom: 15px; }
 
+/* --- CORRECT ANSWER POP-UP (CENTRAL MODAL) --- */
+#feedback-bar {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #050510;
+    border: 2px solid var(--neon-gold);
+    padding: 40px;
+    border-radius: 30px;
+    text-align: center;
+    z-index: 7000;
+    box-shadow: 0 0 40px rgba(255, 204, 0, 0.5);
+    width: 350px;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#feedback-text {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+#next-btn {
+    background: var(--neon-gold);
+    color: #000;
+    border: none;
+    padding: 12px 40px;
+    font-weight: 900;
+    border-radius: 50px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+#next-btn:hover {
+    box-shadow: 0 0 15px var(--neon-gold);
+    transform: scale(1.1);
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Question Layout */
 #question-card {
-    width: 80%;
+    width: 85%;
     max-width: 850px;
     background: rgba(255,255,255,0.02);
     padding: 35px;
@@ -123,6 +153,8 @@ body {
     border: 1.5px solid rgba(0, 212, 255, 0.2);
     text-align: center;
 }
+
+#prize-tag { color: var(--neon-gold); font-weight: bold; margin-bottom: 10px; letter-spacing: 1px; }
 
 #options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 25px; }
 
@@ -136,17 +168,48 @@ body {
     font-size: 1.1rem;
     font-weight: bold;
     text-align: left;
+    transition: 0.2s;
 }
 
 .prefix { color: var(--neon-gold); margin-right: 12px; }
 
 /* End Screen */
-#end-screen { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; z-index: 6000; background: rgba(0,0,0,0.85); }
-.end-content { background: #050510; padding: 50px; border-radius: 40px; border: 2px solid var(--neon-gold); text-align: center; width: 400px; }
+#end-screen { 
+    position: fixed; 
+    inset: 0; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 6000; 
+    background: rgba(0,0,0,0.85); 
+}
 
-.menu-btn { background: transparent; color: white; border: 1.5px solid white; padding: 12px 35px; border-radius: 50px; cursor: pointer; margin-top: 25px; }
+.end-content { 
+    background: #050510; 
+    padding: 50px; 
+    border-radius: 40px; 
+    border: 2px solid var(--neon-gold); 
+    text-align: center; 
+    width: 400px; 
+}
 
-.ladder-step { padding: 8px 20px; color: #333; font-weight: bold; font-size: 0.9rem; }
+#wrong-reveal-box p { color: #888; margin-bottom: 5px; }
+#final-prize { font-size: 2.5rem; color: var(--neon-gold); font-weight: 900; margin: 15px 0; }
+
+.menu-btn { 
+    background: transparent; 
+    color: white; 
+    border: 1.5px solid white; 
+    padding: 12px 35px; 
+    border-radius: 50px; 
+    cursor: pointer; 
+    margin-top: 25px; 
+    transition: 0.3s;
+}
+.menu-btn:hover { background: white; color: black; }
+
+/* Ladder Styling */
+.ladder-step { padding: 8px 20px; color: #444; font-weight: bold; font-size: 0.9rem; transition: 0.3s; }
 .ladder-step.active { color: var(--neon-gold); background: rgba(255, 204, 0, 0.1); border-radius: 50px; }
 .ladder-step.completed { color: var(--neon-blue); }
 

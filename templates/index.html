@@ -28,7 +28,7 @@
                 <img src="/assets/logo.png" alt="Logo" class="mini-logo-v2">
                 <div id="timer-text" class="subtle-gold-glow">--</div>
 
-                <div id="question-card" class="subtle-blue-glow">
+                <div id="question-card">
                     <div id="prize-tag">CURRENT PRIZE: $0</div>
                     <h2 id="q-text">Connecting to System...</h2>
                     
@@ -56,6 +56,11 @@
             </div>
             <button class="menu-btn" onclick="location.reload()">MAIN MENU</button>
         </div>
+    </div>
+
+    <div id="feedback-bar" class="hidden">
+        <p id="feedback-text"></p>
+        <button id="next-btn" onclick="loadNextQuestion()">PROCEED &rarr;</button>
     </div>
 
     <script src="/static/script.js"></script>

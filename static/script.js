@@ -2,9 +2,20 @@ let questions = [];
 let currentIdx = 0;
 let timer;
 let timeLeft = 0;
-const money = ["$100","$200","$300","$500","$1,000","$2,000","$4,000","$8,000","$16,000","$32,000","$64,000","$125,000","$250,000","$500,000","$1 MILLION"];
+const money = ["100 QP","200 QP","300 QP","500 QP","1,000 QP","2,000 QP","4,000 QP","8,000 QP","16,000 QP","32,000 QP","64,000 QP","125,000 QP","250,000 QP","500,000 QP","1 MILLION QP"];
+
+// --- SOUND OBJECTS ---
+const sfxLock = new Audio('/static/sounds/lock.mp3');
+const sfxCorrect = new Audio('/static/sounds/correct.mp3');
+const sfxWrong = new Audio('/static/sounds/wrong.mp3');
 
 function initGame() {
+    // This "wakes up" the audio engine for the browser
+    sfxLock.play().then(() => {
+        sfxLock.pause();
+        sfxLock.currentTime = 0;
+    }).catch(e => console.log("Audio waiting for user interaction"));
+
     document.getElementById('start-screen').style.display = 'none';
     startGame();
 }
@@ -22,6 +33,9 @@ async function startGame() {
 
 function loadQuestion() {
     if (currentIdx >= 15) return showEndScreen(true);
+    
+    document.getElementById('feedback-bar').classList.add('hidden');
+    document.getElementById('game-viewport').classList.remove('blur-game');
     
     const currentQ = questions[currentIdx];
     timeLeft = currentQ.difficulty === 'easy' ? 45 : (currentQ.difficulty === 'medium' ? 75 : 90);
@@ -46,10 +60,9 @@ function startTimer() {
         const display = document.getElementById('timer-text');
         display.innerText = timeLeft;
         if (timeLeft <= 10) display.style.color = "var(--neon-red)";
-
         if (timeLeft <= 0) {
             clearInterval(timer);
-            showEndScreen(false, "Time Expired!");
+            showEndScreen(false, questions[currentIdx].answer);
         }
     }, 1000);
 }
@@ -60,25 +73,52 @@ function selectAnswer(i) {
     const correctAns = questions[currentIdx].answer;
     const selectedAns = questions[currentIdx].options[i];
 
+    // Play "Lock In" Sound
+    sfxLock.play();
+
     buttons.forEach(b => b.disabled = true);
     buttons[i].style.borderColor = "orange";
+    buttons[i].style.boxShadow = "0 0 15px orange";
 
     setTimeout(() => {
         if (selectedAns === correctAns) {
+            // Play Correct Sound
+            sfxCorrect.play();
+            
             buttons[i].style.background = "var(--neon-green)";
             buttons[i].style.color = "black";
-            setTimeout(() => {
-                currentIdx++;
-                resetButtons();
-                loadQuestion();
-            }, 1200);
+            buttons[i].style.borderColor = "var(--neon-green)";
+            showFeedbackBar();
         } else {
+            // Play Wrong Sound
+            sfxWrong.play();
+            
             buttons[i].style.background = "var(--neon-red)";
-            setTimeout(() => {
-                showEndScreen(false, correctAns);
-            }, 1200);
+            buttons.forEach(b => {
+                if(b.innerText.includes(correctAns)) {
+                    b.style.background = "var(--neon-green)";
+                    b.style.color = "black";
+                }
+            });
+            setTimeout(() => { showEndScreen(false, correctAns); }, 1500);
         }
-    }, 1000);
+    }, 1200);
+}
+
+function showFeedbackBar() {
+    const bar = document.getElementById('feedback-bar');
+    const text = document.getElementById('feedback-text');
+    const viewport = document.getElementById('game-viewport');
+    
+    viewport.classList.add('blur-game');
+    bar.classList.remove('hidden');
+    text.innerHTML = `CORRECT!<br><span style="color:var(--neon-gold); font-size: 1.1rem;">PRIZE: ${money[currentIdx]}</span>`;
+}
+
+function loadNextQuestion() {
+    currentIdx++;
+    resetButtons();
+    loadQuestion();
 }
 
 function showEndScreen(won, correctStr = "") {
@@ -86,7 +126,7 @@ function showEndScreen(won, correctStr = "") {
     const viewport = document.getElementById('game-viewport');
     
     screen.classList.remove('hidden');
-    viewport.classList.add('blur-effect');
+    viewport.classList.add('blur-game');
 
     if (won) {
         document.getElementById('result-title').innerText = "MILLIONAIRE!";
@@ -96,7 +136,7 @@ function showEndScreen(won, correctStr = "") {
         document.getElementById('correct-reveal').innerText = correctStr;
         document.getElementById('wrong-reveal-box').classList.remove('hidden');
     }
-    document.getElementById('final-prize').innerText = currentIdx > 0 ? money[currentIdx-1] : "$0";
+    document.getElementById('final-prize').innerText = currentIdx > 0 ? money[currentIdx-1] : "0 QP";
 }
 
 function resetButtons() {
@@ -109,19 +149,21 @@ function resetButtons() {
 function setupLadder() {
     const ladder = document.getElementById('ladder');
     ladder.innerHTML = '';
-    money.forEach((m, i) => {
+    money.slice().reverse().forEach((m, i) => {
+        const actualIdx = 14 - i; 
         const div = document.createElement('div');
-        div.id = `step-${i}`;
+        div.id = `step-${actualIdx}`;
         div.className = 'ladder-step';
-        div.innerText = `${i+1} • ${m}`;
+        div.innerText = `${actualIdx + 1} • ${m}`;
         ladder.appendChild(div);
     });
 }
 
 function updateLadderUI() {
-    document.querySelectorAll('.ladder-step').forEach((s, i) => {
+    document.querySelectorAll('.ladder-step').forEach((s) => {
+        const stepIdx = parseInt(s.id.split('-')[1]);
         s.classList.remove('active', 'completed');
-        if (i === currentIdx) s.classList.add('active');
-        if (i < currentIdx) s.classList.add('completed');
+        if (stepIdx === currentIdx) s.classList.add('active');
+        if (stepIdx < currentIdx) s.classList.add('completed');
     });
 }
