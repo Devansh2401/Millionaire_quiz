@@ -108,7 +108,7 @@ body {
     border-radius: 30px;
     text-align: center;
     z-index: 7000;
-    box-shadow: 0 0 40px rgba(255, 204, 0, 0.5);
+    box-shadow: 0 0 40px rgba(13, 255, 0, 0.5);
     width: 350px;
     animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -193,7 +193,7 @@ body {
     width: 400px; 
 }
 
-#wrong-reveal-box p { color: #888; margin-bottom: 5px; }
+#wrong-reveal-box p { color: #888; margin-bottom: 5px;}
 #final-prize { font-size: 2.5rem; color: var(--neon-gold); font-weight: 900; margin: 15px 0; }
 
 .menu-btn { 
