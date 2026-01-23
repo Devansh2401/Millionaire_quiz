@@ -2,19 +2,18 @@ let questions = [];
 let currentIdx = 0;
 let timer;
 let timeLeft = 0;
+let isPaused = false; // Added state
 const money = ["100 QP","200 QP","300 QP","500 QP","1,000 QP","2,000 QP","4,000 QP","8,000 QP","16,000 QP","32,000 QP","64,000 QP","125,000 QP","250,000 QP","500,000 QP","1 MILLION QP"];
 
-// --- SOUND OBJECTS ---
 const sfxLock = new Audio('/static/sounds/lock.mp3');
 const sfxCorrect = new Audio('/static/sounds/correct.mp3');
 const sfxWrong = new Audio('/static/sounds/wrong.mp3');
 
 function initGame() {
-    // This "wakes up" the audio engine for the browser
     sfxLock.play().then(() => {
         sfxLock.pause();
         sfxLock.currentTime = 0;
-    }).catch(e => console.log("Audio waiting for user interaction"));
+    }).catch(e => console.log("Audio waiting"));
 
     document.getElementById('start-screen').style.display = 'none';
     startGame();
@@ -34,6 +33,7 @@ async function startGame() {
 function loadQuestion() {
     if (currentIdx >= 15) return showEndScreen(true);
     
+    isPaused = false; // Reset pause on new question
     document.getElementById('feedback-bar').classList.add('hidden');
     document.getElementById('game-viewport').classList.remove('blur-game');
     
@@ -53,46 +53,67 @@ function loadQuestion() {
     startTimer();
 }
 
+// Updated startTimer to support Pause
 function startTimer() {
     clearInterval(timer);
     timer = setInterval(() => {
-        timeLeft--;
-        const display = document.getElementById('timer-text');
-        display.innerText = timeLeft;
-        if (timeLeft <= 10) display.style.color = "var(--neon-red)";
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            showEndScreen(false, questions[currentIdx].answer);
+        if (!isPaused) { // Only countdown if NOT paused
+            timeLeft--;
+            const display = document.getElementById('timer-text');
+            display.innerText = timeLeft;
+            if (timeLeft <= 10) display.style.color = "var(--neon-red)";
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                showEndScreen(false, questions[currentIdx].answer);
+            }
         }
     }, 1000);
 }
 
+// New Toggle Pause Function
+function togglePause() {
+    if (currentIdx >= 15) return;
+
+    isPaused = !isPaused;
+    const btn = document.getElementById('pause-toggle');
+    const viewport = document.getElementById('game-viewport');
+    const optionButtons = document.querySelectorAll('.opt-btn');
+
+    if (isPaused) {
+        btn.innerText = "RESUME";
+        btn.classList.add('active');
+        viewport.classList.add('blur-game');
+        optionButtons.forEach(b => b.disabled = true);
+    } else {
+        btn.innerText = "PAUSE";
+        btn.classList.remove('active');
+        viewport.classList.remove('blur-game');
+        optionButtons.forEach(b => b.disabled = false);
+    }
+}
+
 function selectAnswer(i) {
+    if (isPaused) return; // Prevent clicking while paused
+    
     clearInterval(timer);
     const buttons = document.querySelectorAll('.opt-btn');
     const correctAns = questions[currentIdx].answer;
     const selectedAns = questions[currentIdx].options[i];
 
-    // Play "Lock In" Sound
     sfxLock.play();
-
     buttons.forEach(b => b.disabled = true);
     buttons[i].style.borderColor = "orange";
     buttons[i].style.boxShadow = "0 0 15px orange";
 
     setTimeout(() => {
         if (selectedAns === correctAns) {
-            // Play Correct Sound
             sfxCorrect.play();
-            
             buttons[i].style.background = "var(--neon-green)";
             buttons[i].style.color = "black";
             buttons[i].style.borderColor = "var(--neon-green)";
             showFeedbackBar();
         } else {
-            // Play Wrong Sound
             sfxWrong.play();
-            
             buttons[i].style.background = "var(--neon-red)";
             buttons.forEach(b => {
                 if(b.innerText.includes(correctAns)) {
